@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">JMULib</string>
+    <string name="book_content">本书理论知识系统全面，详细讲解了选择器、边框、背景、文本、颜色、盒模型、伸缩布局盒模型、多列布局、渐变、过渡、动画、媒体、响应Web设计、Web字体等主题下涵盖的所有CSS3新特性</string>
+</resources>

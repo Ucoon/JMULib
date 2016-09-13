@@ -44,52 +44,55 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String address;
 
     //定义一个变量，来标识是否退出
-    private static boolean isExit=false;
+    private static boolean isExit = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        View view=getWindow().getDecorView();
-        int option=View.SYSTEM_UI_FLAG_FULLSCREEN;
+        View view = getWindow().getDecorView();
+        int option = View.SYSTEM_UI_FLAG_FULLSCREEN;
         view.setSystemUiVisibility(option);
         init();
     }
-    private void init(){
-        user_bg= (ImageView) findViewById(R.id.user_bg);
+
+    private void init() {
+        user_bg = (ImageView) findViewById(R.id.user_bg);
         user_bg.setOnClickListener(this);
-        username= (TextView) findViewById(R.id.user_name);
-        edit_search= (EditText) findViewById(R.id.edit_search);
+        username = (TextView) findViewById(R.id.user_name);
+        edit_search = (EditText) findViewById(R.id.edit_search);
 
 
-        btn_search= (Button) findViewById(R.id.btn_search);
+        btn_search = (Button) findViewById(R.id.btn_search);
         btn_search.setOnClickListener(this);
-        gifImage= (ImageView) findViewById(R.id.gifImage);
+        gifImage = (ImageView) findViewById(R.id.gifImage);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(!SharedPreferenceUtil.getStringValue(MainActivity.this,SharedPreferenceUtil.USERNAME,"JMU").equals("")){
-            username.setText(SharedPreferenceUtil.getStringValue(MainActivity.this,SharedPreferenceUtil.USERNAME,"JMU"));
+        if (!SharedPreferenceUtil.getStringValue(MainActivity.this, SharedPreferenceUtil.USERNAME, "JMU").equals("")) {
+            username.setText(SharedPreferenceUtil.getStringValue(MainActivity.this, SharedPreferenceUtil.USERNAME, "JMU"));
         }
     }
 
     LoginDialog dialog;
+
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.user_bg:
-                if(!SharedPreferenceUtil.getStringValue(MainActivity.this,SharedPreferenceUtil.COOKIE,"").equals("")){
-                    Intent intent=new Intent(MainActivity.this,PersonalActivity.class);
+                if (!SharedPreferenceUtil.getStringValue(MainActivity.this, SharedPreferenceUtil.COOKIE, "").equals("")) {
+                    Intent intent = new Intent(MainActivity.this, PersonalActivity.class);
                     startActivity(intent);
-                }else{
-                    dialog=new LoginDialog(MainActivity.this, new LoginDialog.IcustomDialogEventListener() {
+                } else {
+                    dialog = new LoginDialog(MainActivity.this, new LoginDialog.IcustomDialogEventListener() {
                         @Override
                         public void CustomDialogEvent(String text1, String text2) {
                             //网络请求 开启子线程
-                            UserLogin(text1,text2);
+                            UserLogin(text1, text2);
                         }
-                    },R.style.Dialog);
+                    }, R.style.Dialog);
                     dialog.show();
                 }
                 break;
@@ -97,20 +100,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 //URL中含中文，使用正则表达式编码中文字符串
                 address = edit_search.getText().toString();
-                if(!address.equals("")){
+                if (!address.equals("")) {
                     Glide.with(this).load(R.drawable.chicken).crossFade(1000).into(gifImage);
-                    Timer timer=new Timer();
-                    TimerTask task=new TimerTask() {
+                    Timer timer = new Timer();
+                    TimerTask task = new TimerTask() {
                         @Override
                         public void run() {
-                            Intent intent=new Intent(MainActivity.this,SearchResActivity.class);
-                            intent.putExtra("address",address);
+                            Intent intent = new Intent(MainActivity.this, SearchResActivity.class);
+                            intent.putExtra("address", address);
                             startActivity(intent);
                         }
                     };
-                    timer.schedule(task,1000);
-                }else{
-                    Toast.makeText(MainActivity.this,"输入不为空",Toast.LENGTH_LONG).show();
+                    timer.schedule(task, 1000);
+                } else {
+                    Toast.makeText(MainActivity.this, "输入不为空", Toast.LENGTH_LONG).show();
                 }
 
                 break;
@@ -124,34 +127,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //用户登录
-    private void UserLogin(String user_account,String pw){
-        HttpUtil.sendHttpRequestWithHttpURLConnection(UrlConfig.login +user_account + "&pwd=" + pw, new HttpCallBackListener() {
+    private void UserLogin(String user_account, String pw) {
+        HttpUtil.sendHttpRequestWithHttpURLConnection(UrlConfig.login + user_account + "&pwd=" + pw, new HttpCallBackListener() {
             @Override
             public void onFinish(final String response) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
                         try {
-                            Log.e("response==",response);
-                            JSONObject jsonObject=new JSONObject(response);
-                            String status=jsonObject.getString("status");
-                            String cookie=jsonObject.getString("cookie");
-                            SharedPreferenceUtil.setStringValue(MainActivity.this,SharedPreferenceUtil.COOKIE,cookie);
-                            if(status.equals("success")){
-                           //     getInfoes(SharedPreferenceUtil.getStringValue(MainActivity.this,SharedPreferenceUtil.COOKIE,""));
-                                Intent intent=new Intent(MainActivity.this,PersonalActivity.class);
+                            Log.e("response==", response);
+                            JSONObject jsonObject = new JSONObject(response);
+                            String status = jsonObject.getString("status");
+                            String cookie = jsonObject.getString("cookie");
+                            SharedPreferenceUtil.setStringValue(MainActivity.this, SharedPreferenceUtil.COOKIE, cookie);
+                            if (status.equals("success")) {
+                                //     getInfoes(SharedPreferenceUtil.getStringValue(MainActivity.this,SharedPreferenceUtil.COOKIE,""));
+                                Intent intent = new Intent(MainActivity.this, PersonalActivity.class);
                                 startActivity(intent);
                                 dialog.dismiss();
                             }else{
-                                Log.e("请输入正确的学号或密码","请输入正确的学号或密码");
-                        // Toast.makeText(MainActivity.this, "请输入正确的学号或密码", Toast.LENGTH_LONG).show();
+                                Log.e("请输入正确的学号或密码 外面", "请输入正确的学号或密码");
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Log.e("请输入正确的学号或密码", "请输入正确的学号或密码");
+                                        Toast.makeText(MainActivity.this, "请输入正确的学号或密码", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
-                });
-            }
+//                });
+//            }
 
             @Override
             public void onError(Exception e) {
@@ -165,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
     }
+
     Handler mHandler = new Handler() {
 
         @Override
@@ -173,13 +184,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             isExit = false;
         }
     };
+
     //点击两次返回键强制退出
-    private void exit(){
-        if(!isExit){
-            isExit=true;
-            Toast.makeText(MainActivity.this,"再按一次退出程序",Toast.LENGTH_LONG).show();
-            mHandler.sendEmptyMessageDelayed(0,2000);
-        }else{
+    private void exit() {
+        if (!isExit) {
+            isExit = true;
+            Toast.makeText(MainActivity.this, "再按一次退出程序", Toast.LENGTH_LONG).show();
+            mHandler.sendEmptyMessageDelayed(0, 2000);
+        } else {
             finish();
             System.exit(0);
         }
@@ -188,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode==KeyEvent.KEYCODE_BACK&&event.getRepeatCount()==0){
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
             if (keyCode == KeyEvent.KEYCODE_BACK) {
                 exit();
                 return false;

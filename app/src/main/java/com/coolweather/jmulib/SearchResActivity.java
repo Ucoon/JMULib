@@ -115,9 +115,9 @@ public class SearchResActivity extends AppCompatActivity implements View.OnClick
         HttpUtil.sendHttpRequestWithHttpURLConnection(address, new HttpCallBackListener() {
             @Override
             public void onFinish(final String response) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
                         Log.e("response==",response);
                         try {
                             JSONObject jsonObject = new JSONObject(response);
@@ -154,8 +154,8 @@ public class SearchResActivity extends AppCompatActivity implements View.OnClick
                             e.printStackTrace();
                         }
                     }
-                });
-            }
+//                });
+//            }
 
             @Override
             public void onError(Exception e) {
